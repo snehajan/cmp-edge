@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nodejs-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: nodejs-app
+  template:
+    metadata:
+      labels:
+        app: nodejs-app
+    spec:
+      containers:
+      - name: nodejs-app
+        image: vijayarajr/nodejs-app1-v1:latest
+        ports:
+        - containerPort: 80
+        env:
+        - name: POSTGRES_USER
+          value: "postgres"  # Replace with actual username
+        - name: POSTGRES_PASSWORD
+          value: "redhat"  # Replace with actual password
+        - name: POSTGRES_HOST
+          # value: "postgres-service"  # Assuming service name for PostgreSQL
+        - name: POSTGRES_PORT
+          value: "5432"
+      restartPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nodejs-app-service
+spec:
+  selector:
+    app: nodejs-app
+  type: ClusterIP
+  clusterIP: 10.43.94.124
+  ports:
+  - protocol: TCP
+    port: 80  # External port for accessing the Node.js application
+    targetPort: 8080  # Maps to the container port
+  type: NodePort  # Expose the service through a NodePort
+

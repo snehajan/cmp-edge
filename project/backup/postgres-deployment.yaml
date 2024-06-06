@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres
+spec:
+  replicas: 1  # Number of PostgreSQL pod replicas (can be scaled)
+  selector:
+    matchLabels:
+      app: postgres
+  template:
+    metadata:
+      labels:
+        app: postgres
+    spec:
+      containers:
+      - name: postgres
+        image: postgresql:latest  # Replace with your actual image name
+        ports:
+        - containerPort: 5432
+        envFrom:
+        - configMapRef:
+            name: postgres-config  # Reference to ConfigMap with initialization script
+      restartPolicy: Always
+      volumeMounts:
+      - name: postgres-data
+        mountPath: /var/lib/postgresql/data
+      volumes:
+      - name: postgres-data
+        emptyDir: {}  # Use emptyDir for local storage (consider persistent volumes for production)
+      - name: postgres-data
+        mountPath: /var/lib/postgresql/data

@@ -1,0 +1,25 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: nodejs-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/proxy-body-size: "10m"
+    cert-manager.io/cluster-issuer: "letsencrypt-prod" # Only if using cert-manager with Let's Encrypt
+spec:
+  tls:
+  - hosts:
+    - cmp-edge.telus-projects.com
+    secretName: tls-secret
+  rules:
+  - host: cmp-edge.telus-projects.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: nodejs-app-service
+            port:
+              number: 80

@@ -1,0 +1,17 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: nodejs-app-ingress
+spec:
+  rules:
+  - host: cmp-edge-console.telus-projects.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: nodejs-app-1-service
+            port:
+              number: 80
+  ingressClassName: nginx
